@@ -1,7 +1,7 @@
 
 
 # Set your name and email
-usethis::use_git_config(user.name = "erobless", 
+usethis::use_git_config(user.name = "Earobless", 
                         user.email = "alejandrarobles2509@gmail.com")
 usethis::use_git()
 
