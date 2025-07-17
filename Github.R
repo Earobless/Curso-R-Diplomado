@@ -8,8 +8,20 @@ usethis::use_git()
 usethis::use_github()
 
 usethis::git_sitrep()
-####
 renv::init()
+####
+
+install.packages(c("usethis", "renv", "gh"))
+renv::clean()
+renv::remove("pdftools")
+renv::install("pdftools")
+
+library(pdftools)
+
+git --version
+
+
+
 
 
 
