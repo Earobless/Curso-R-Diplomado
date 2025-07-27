@@ -47,7 +47,7 @@ ventas %>%
     y = "Utilidad ($)"
   ) +
   theme_minimal()
-
+#
 
 
 
