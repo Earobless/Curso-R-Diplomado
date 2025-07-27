@@ -18,7 +18,7 @@ Este proyecto consiste en el desarrollo de una solución automatizada para la ag
 
 A continuación se presenta el flujo de trabajo del sistema:
 
-```{r fig.align="center", echo=FALSE, out.width="80%"}
+```{r fig.align="center", echo=FALSE, out.width="40%"}
 knitr::include_graphics("flujo.png")
 ```
 
@@ -89,5 +89,27 @@ model_card:
     - "La app aún está en fase MVP"
     
 ```
+## 5. Despliegue
+
+La solución será llevada a producción mediante el despliegue de una aplicación web construida con **Shiny**, alojada inicialmente en [Shinyapps.io](https://www.shinyapps.io/), un servicio que permite publicar aplicaciones desarrolladas en R sin requerir servidores propios.
+
+El proceso de despliegue contempla los siguientes pasos:
+
+- **Preparación del producto mínimo viable (MVP):** Validación local de que la aplicación funcione correctamente y que los cálculos sean consistentes.
+- **Versionamiento con Git y GitHub:** El código fuente y la documentación se mantienen organizados y rastreados en un repositorio, lo cual facilita futuras actualizaciones.
+- **Publicación en Shinyapps.io:** Se utilizará la función `rsconnect::deployApp()` desde RStudio para subir la app. Se podrá limitar el acceso a usuarios autorizados.
+- **Escalabilidad futura:** En función del crecimiento del negocio, se evaluará migrar a un servidor propio o usar plataformas como RStudio Connect para una gestión más robusta.
+
+## 6. Monitoreo
+
+Aunque el proyecto no incluye aún un modelo de machine learning, se implementarán mecanismos de monitoreo para asegurar el funcionamiento estable de la app:
+
+- **Validación de entradas:** Se controlará que los datos ingresados por los ejecutivos cumplan con los formatos esperados (valores numéricos, sin valores faltantes).
+- **Indicadores de control:** La aplicación mostrará alertas o validaciones internas si se detectan inconsistencias, como ventas con utilidad negativa.
+- **Registros de uso (logs):** Se mantendrán logs básicos de interacción para detectar errores o mal uso.
+- **Feedback de usuarios:** Durante la etapa MVP se recogerán comentarios de los usuarios clave para mejorar la aplicación.
+- **Actualización continua:** Los ajustes se versionarán mediante Git y cada nueva versión se desplegará de forma ordenada.
+
+En futuras etapas, si se incorporan modelos predictivos, se podrá integrar **Vetiver** para gestionar el versionado, validación y monitoreo de modelos en producción.
 
 
