@@ -1,0 +1,131 @@
+---
+title: "Pipeline de Prediccion y Optimizacion"
+author: "Erika Robles"
+date: "2025-08-14"
+output: html_document
+---
+# 1. Descripción de la solución
+
+## 1.1 Propósito
+El objetivo es desarrollar un **pipeline automatizado** que prediga la **demanda de vuelos** de LATAM usando datos reales de la **DGAC 2024** y que, mediante **Aprendizaje por Refuerzo (Q-learning)**, sugiera precios óptimos según ocupación y proyecciones de demanda.
+
+## 1.2 Usuarios
+- Analistas y especialistas en **Revenue Management**.
+- Áreas comerciales y de planificación de LATAM.
+- Equipos de análisis y data science.
+
+## 1.3 Entradas
+- Archivos Excel con datos reales de DGAC 2024.
+- Columnas clave: Año, Aerolínea, Origen, Destino, Pasajeros.
+- Frecuencia: mensual.
+- Calidad: limpieza, validación de columnas y valores.
+
+## 1.4 Procesamiento
+- Limpieza y normalización de datos.
+- Creación de variables adicionales: Mes, Ruta, Origen_final, Destino_final.
+- ANN para predecir demanda esperada por ruta y mes.
+- Q-learning para optimización de precios dinámicos.
+
+## 1.5 Salidas
+- Predicciones de demanda por ruta y mes.
+- Recomendaciones de precios.
+- Visualizaciones y métricas.
+
+## 1.6 Consumo y Usabilidad
+El pipeline puede integrarse en un **dashboard** o ejecutarse desde línea de comando.  
+Genera un reporte PDF con resultados y gráficas.
+
+## 1.7 Mantenimiento
+- Actualización mensual de datos.
+- Reentrenamiento del modelo cada trimestre.
+- Monitoreo de métricas clave.
+
+## 1.8 KPI’s
+- Uso: número de rutas evaluadas y simuladas.
+- Impacto: decisiones de precios y estimación de ingresos.
+- Calidad: consistencia y completitud de datos.
+
+# 2. Diagrama de Flujo
+```{r}
+library(DiagrammeR)
+grViz("
+digraph flujo {
+  node [shape=box, style=filled, color=LightBlue]
+  A [label='Datos DGAC 2024 (Excel)']
+  B [label='Limpieza y preprocesamiento']
+  C [label='ANN - Predicción de demanda']
+  D [label='Q-Learning - Optimización de precios']
+  E [label='Exportar CSV final']
+
+  A -> B -> C -> D -> E
+}
+")
+```
+# 3. MVP del Proyecto 
+> **Nota:** Los códigos se muestran como referencia y no se ejecutan dentro de este RMarkdown para evitar errores de Python/TensorFlow.
+
+```{python, eval=FALSE}
+import pandas as pd
+import numpy as np
+import glob
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from sklearn.model_selection import train_test_split
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+
+# Carga y limpieza de datos
+carpeta = "/Users/ale.jandrarobles/Documents/ERobles Machine Learning/datos_latam_2024"
+archivos = glob.glob(carpeta + "/*.xlsx")
+df_list = []
+for archivo in archivos:
+    df = pd.read_excel(archivo)
+    df_list.append(df)
+df_final = pd.concat(df_list, ignore_index=True)
+
+# ANN simplificada
+df_final['Mes'] = np.random.randint(1, 13, size=len(df_final))
+df_final['Ruta'] = df_final['Origen_final'] + "-" + df_final['Destino_final']
+
+X_cat = df_final[['Origen_final','Destino_final','Ruta','Mes']]
+X_num = df_final[['Pasajeros']]
+
+encoder = OneHotEncoder(sparse_output=False)
+X_cat_enc = encoder.fit_transform(X_cat)
+
+scaler = StandardScaler()
+X_num_scaled = scaler.fit_transform(X_num)
+
+X = np.hstack([X_cat_enc, X_num_scaled])
+y = df_final['Pasajeros'].values
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+model = Sequential([
+    Dense(64, activation='relu', input_shape=(X.shape[1],)),
+    Dense(32, activation='relu'),
+    Dense(1)
+])
+model.compile(optimizer='adam', loss='mse')
+model.fit(X_train, y_train, epochs=10)
+
+```
+# 4. Cierre del Proyecto
+
+## Reflexión Final
+
+Este R Markdown muestra de forma explicativa y reproducible el **pipeline completo** del proyecto, incluyendo:
+
+- **Flujo de datos y procesamiento:** desde la carga de archivos Excel de la DGAC hasta la limpieza y generación de variables finales.  
+- **MVP funcional con ANN:** para predecir la demanda de vuelos por ruta y mes.  
+- **Preparación para Q-Learning:** el código está listo para integrar la optimización de precios basada en demanda y ocupación.
+
+Aunque no se muestran todos los detalles de los cálculos y entrenamientos, este trabajo ilustra un **MVP funcional** que demuestra la aplicabilidad de técnicas de Machine Learning y Reinforcement Learning en Revenue Management.
+
+## Próximos pasos
+
+- Refinar la predicción incorporando más variables y datos históricos.  
+- Implementar versiones más complejas de Q-Learning para optimización de precios.  
+- Crear dashboards interactivos para análisis de resultados.
+
+> **Nota:** Los códigos completos y resultados más detallados se encuentran disponibles en el [repositorio de GitHub](https://github.com/Earobless/Latam-Demand-Forecast).
+
